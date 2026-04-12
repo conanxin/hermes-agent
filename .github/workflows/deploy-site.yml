@@ -4,8 +4,8 @@ on:
   push:
     branches: [main]
     paths:
-      - 'website/**'
-      - 'landingpage/**'
+      - 'project/website/**'
+      - 'project/landingpage/**'
       - 'skills/**'
       - 'optional-skills/**'
       - '.github/workflows/deploy-site.yml'
@@ -34,7 +34,7 @@ jobs:
         with:
           node-version: 20
           cache: npm
-          cache-dependency-path: website/package-lock.json
+          cache-dependency-path: project/website/package-lock.json
 
       - uses: actions/setup-python@v5
         with:
@@ -44,23 +44,23 @@ jobs:
         run: pip install pyyaml
 
       - name: Extract skill metadata for dashboard
-        run: python3 website/scripts/extract-skills.py
+        run: python3 project/website/scripts/extract-skills.py
 
       - name: Install dependencies
         run: npm ci
-        working-directory: website
+        working-directory: project/website
 
       - name: Build Docusaurus
         run: npm run build
-        working-directory: website
+        working-directory: project/website
 
       - name: Stage deployment
         run: |
           mkdir -p _site/docs
           # Landing page at root
-          cp -r landingpage/* _site/
+          cp -r project/landingpage/* _site/
           # Docusaurus at /docs/
-          cp -r website/build/* _site/docs/
+          cp -r project/website/build/* _site/docs/
           # CNAME so GitHub Pages keeps the custom domain between deploys
           echo "hermes-agent.nousresearch.com" > _site/CNAME
 
